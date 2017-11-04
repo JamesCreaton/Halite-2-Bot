@@ -81,10 +81,17 @@ int main() {
 					}
 
 					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 6.0);
+					
+					for (int i = 0; i < nearbyShips.size(); i++) {
 
-					//If there is only a small number of ships around a planet, move to the first one and attack it
-					if (nearbyShips.size() > 3) {
-						Attack(map, ship, nearbyShips[0]);
+						if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docking) {
+							Attack(map, ship, nearbyShips[0]);
+						}
+						else if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docked) {
+							Attack(map, ship, nearbyShips[0]);
+						}
+						else
+							Attack(map, ship, nearbyShips[0]);
 					}
 				}
 
