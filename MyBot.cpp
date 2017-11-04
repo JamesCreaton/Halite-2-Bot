@@ -6,17 +6,18 @@ std::vector<hlt::Move> moves;
 void Dock(const hlt::Map& map, const hlt::Ship& ship, const hlt::Planet& planet)
 {
 	hlt::possibly<hlt::Move> move;
-	std::vector<const hlt::Entity*> objectsInWay = hlt::navigation::objects_between(map, ship.location, planet.location);
+	//std::vector<const hlt::Entity*> objectsInWay = hlt::navigation::objects_between(map, ship.location, planet.location);
 
-	if (objectsInWay.size() > 0)
-	{
-		//There are objects inbetween our path
-		for (int i = 0; i < objectsInWay.size(); i++) {
-			if (objectsInWay[i]->owner_id != ship.owner_id) {
-				move = hlt::navigation::navigate_ship_to_dock(map, ship, *objectsInWay[i], hlt::constants::MAX_SPEED);
-			}
-		}
-	}
+	//if (objectsInWay.size() > 0)
+	//{
+	//	//There are objects inbetween our path
+	//	for (int i = 0; i < objectsInWay.size(); i++) {
+	//		if (objectsInWay[i]->owner_id != ship.owner_id) {
+	//			//Move to that object and attack
+	//			move = hlt::navigation::navigate_ship_to_dock(map, ship, *objectsInWay[i], hlt::constants::MAX_SPEED);
+	//		}
+	//	}
+	//}
 
 	if (ship.can_dock(planet)) {
 		moves.push_back(hlt::Move::dock(ship.entity_id, planet.entity_id));
@@ -24,6 +25,15 @@ void Dock(const hlt::Map& map, const hlt::Ship& ship, const hlt::Planet& planet)
 	}
 	move = hlt::navigation::navigate_ship_to_dock(map, ship, planet, hlt::constants::MAX_SPEED);
 
+	if (move.second) {
+		moves.push_back(move.first);
+	}
+}
+
+void Attack(const hlt::Map& map, const hlt::Ship& ship, hlt::Ship& enemy)
+{
+	hlt::possibly<hlt::Move> move;
+	move = hlt::navigation::navigate_ship_to_dock(map, ship, enemy, hlt::constants::MAX_SPEED);
 	if (move.second) {
 		moves.push_back(move.first);
 	}
@@ -57,8 +67,6 @@ int main() {
 			//DO A CHECK FOR ENTITIES AROUND THE PLANETS I OWN AND SEE IF THERE ARE ENEMIES
 			//IF THERE IS, ATTACK THEM
 
-
-
 			std::vector<const hlt::Planet*> planetsByDistance = map.getPlanetsByDistance(ship.location);
 
 			for (const hlt::Planet* planet : planetsByDistance) {
@@ -70,6 +78,13 @@ int main() {
 							break;
 						}
 						continue;
+					}
+
+					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 6.0);
+
+					//If there is only a small number of ships around a planet, move to the first one and attack it
+					if (nearbyShips.size() > 3) {
+						Attack(map, ship, nearbyShips[0]);
 					}
 				}
 
