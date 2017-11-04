@@ -48,7 +48,7 @@ namespace hlt {
 			return planetsSorted;
 		}
 
-		const std::vector<Ship> NearbyEnemyShips(Entity entity, double distanceToSearch) const
+		const std::vector<Ship> NearbyEnemyShips(Entity entity, double distanceToSearch, hlt::PlayerId playerID) const
 		{
 			std::vector<Ship> sortedEntities = std::vector<Ship>();
 
@@ -62,7 +62,7 @@ namespace hlt {
 			 
 			int count = 0;
 			for (auto& ship : ships.at(entity.owner_id)) {
-				if (ship.entity_id == entity.entity_id) {
+				if (ship.entity_id == playerID) {
 					continue;
 				}
 

@@ -75,8 +75,10 @@ int main() {
 						}
 						continue;
 					}
-
-					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 3.0);
+				}
+				else
+				{
+					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 3.0, player_id);
 					for (int i = 0; i < nearbyShips.size(); i++) {
 
 						if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docking) {
