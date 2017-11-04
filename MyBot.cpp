@@ -63,10 +63,6 @@ int main() {
 			if (ship.docking_status != hlt::ShipDockingStatus::Undocked) {
 				continue;
 			}
-
-			//DO A CHECK FOR ENTITIES AROUND THE PLANETS I OWN AND SEE IF THERE ARE ENEMIES
-			//IF THERE IS, ATTACK THEM
-
 			std::vector<const hlt::Planet*> planetsByDistance = map.getPlanetsByDistance(ship.location);
 
 			for (const hlt::Planet* planet : planetsByDistance) {
@@ -80,15 +76,14 @@ int main() {
 						continue;
 					}
 
-					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 6.0);
-					
+					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 3.0);
 					for (int i = 0; i < nearbyShips.size(); i++) {
 
 						if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docking) {
-							Attack(map, ship, nearbyShips[0]);
+							Attack(map, ship, nearbyShips[i]);
 						}
 						else if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docked) {
-							Attack(map, ship, nearbyShips[0]);
+							Attack(map, ship, nearbyShips[i]);
 						}
 						else
 							Attack(map, ship, nearbyShips[0]);
