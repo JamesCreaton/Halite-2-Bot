@@ -13,7 +13,7 @@ void Dock(const hlt::Map& map, const hlt::Ship& ship, const hlt::Planet& planet)
 		//There are objects inbetween our path
 		for (int i = 0; i < objectsInWay.size(); i++) {
 			if (objectsInWay[i]->owner_id != ship.owner_id) {
-				move = hlt::navigation::navigate_ship_to_dock(map, ship, *objectsInWay[0], hlt::constants::MAX_SPEED);
+				move = hlt::navigation::navigate_ship_to_dock(map, ship, *objectsInWay[i], hlt::constants::MAX_SPEED);
 			}
 		}
 	}
