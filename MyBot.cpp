@@ -1,24 +1,13 @@
 #include "hlt/hlt.hpp"
 #include "hlt/navigation.hpp"
+#include <chrono>
+
 
 std::vector<hlt::Move> moves;
 
 void Dock(const hlt::Map& map, const hlt::Ship& ship, const hlt::Planet& planet)
 {
 	hlt::possibly<hlt::Move> move;
-	//std::vector<const hlt::Entity*> objectsInWay = hlt::navigation::objects_between(map, ship.location, planet.location);
-
-	//if (objectsInWay.size() > 0)
-	//{
-	//	//There are objects inbetween our path
-	//	for (int i = 0; i < objectsInWay.size(); i++) {
-	//		if (objectsInWay[i]->owner_id != ship.owner_id) {
-	//			//Move to that object and attack
-	//			move = hlt::navigation::navigate_ship_to_dock(map, ship, *objectsInWay[i], hlt::constants::MAX_SPEED);
-	//		}
-	//	}
-	//}
-
 	if (ship.can_dock(planet)) {
 		moves.push_back(hlt::Move::dock(ship.entity_id, planet.entity_id));
 		return;
@@ -30,7 +19,7 @@ void Dock(const hlt::Map& map, const hlt::Ship& ship, const hlt::Planet& planet)
 	}
 }
 
-void Attack(const hlt::Map& map, const hlt::Ship& ship, hlt::Ship& enemy)
+void Attack(const hlt::Map& map, const hlt::Ship& ship, const hlt::Ship& enemy)
 {
 	hlt::possibly<hlt::Move> move;
 	move = hlt::navigation::navigate_ship_to_dock(map, ship, enemy, hlt::constants::MAX_SPEED);
@@ -42,8 +31,9 @@ void Attack(const hlt::Map& map, const hlt::Ship& ship, hlt::Ship& enemy)
 int main() {
 	const hlt::Metadata metadata = hlt::initialize("JamesCreaton");
 	const hlt::PlayerId player_id = metadata.player_id;
-
 	const hlt::Map& initial_map = metadata.initial_map;
+
+	auto t1 = std::chrono::high_resolution_clock::now();
 
 	// We now have 1 full minute to analyse the initial map.
 	std::ostringstream initial_map_intelligence;
@@ -54,6 +44,7 @@ int main() {
 		<< "; my ships: " << initial_map.ship_map.at(player_id).size()
 		<< "; planets: " << initial_map.planets.size();
 	hlt::Log::log(initial_map_intelligence.str());
+	hlt::Log::log(std::string("test"));
 
 	for (;;) {
 		moves.clear();
@@ -66,6 +57,8 @@ int main() {
 			std::vector<const hlt::Planet*> planetsByDistance = map.getPlanetsByDistance(ship.location);
 
 			for (const hlt::Planet* planet : planetsByDistance) {
+
+				//Planet owned, so fill it
 				if (planet->owned) {
 
 					if (planet->owner_id == player_id) {
@@ -76,27 +69,26 @@ int main() {
 						continue;
 					}
 				}
+
+				//Planet not owned, so attack ships on it 
 				else
 				{
-					std::vector<hlt::Ship> nearbyShips = map.NearbyEnemyShips(*planet, 3.0, player_id);
-					for (int i = 0; i < nearbyShips.size(); i++) {
-
-						if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docking) {
-							Attack(map, ship, nearbyShips[i]);
-						}
-						else if (nearbyShips[i].docking_status == hlt::ShipDockingStatus::Docked) {
-							Attack(map, ship, nearbyShips[i]);
-						}
-						else
-							Attack(map, ship, nearbyShips[0]);
+					if (ship.can_dock(*planet)) {
+						Dock(map, ship, *planet);
+					}
+					else {
+						Attack(map, ship, map.get_ship(planet->owner_id, planet->docked_ships.at(0)));
 					}
 				}
 
 				Dock(map, ship, *planet);
-
 				break;
 			}
 		}
+		auto t2 = std::chrono::high_resolution_clock::now();
+		auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+		hlt::Log::log("Turn Time: " + std::to_string(1000 * diff.count()));
+
 		if (!hlt::out::send_moves(moves)) {
 			hlt::Log::log("send_moves failed; exiting");
 			break;

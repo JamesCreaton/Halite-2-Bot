@@ -3,7 +3,4 @@ CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd6
 
 cl.exe /std:c++14 /O2 /MT /EHsc /D_USE_MATH_DEFINES .\hlt\hlt_in.cpp .\hlt\location.cpp .\hlt\map.cpp .\MyBot.cpp /link /out:MyBot.exe
 
-.\halite.exe -d "240 160" ".\MyBot.exe" ".\MyBot.exe" ".\MyBot-v7.exe" ".\MyBot-v7.exe"
-
-
-
+.\halite.exe -d "240 160" ".\MyBot.exe" ".\MyBot.exe"

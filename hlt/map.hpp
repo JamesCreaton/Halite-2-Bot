@@ -48,18 +48,9 @@ namespace hlt {
 			return planetsSorted;
 		}
 
-		const std::vector<Ship> NearbyEnemyShips(Entity entity, double distanceToSearch, hlt::PlayerId playerID) const
+		const std::vector<Ship> NearbyEnemyShips(hlt::Entity entity, double distanceToSearch, hlt::PlayerId playerID) const
 		{
 			std::vector<Ship> sortedEntities = std::vector<Ship>();
-
-			/*Don't really need to be find the planets around just yet, just want to know how many enemies around a planet*/
-			//for (int i = 0; i < planets.size(); i++) {
-			//	if (planets[i].entity_id == entity.entity_id) {
-			//		continue;
-			//	}
-			//	sortedEntities[entity.location.get_distance_to(planets[i].location)] = planets[i];
-			//}
-			 
 			int count = 0;
 			for (auto& ship : ships.at(entity.owner_id)) {
 				if (ship.entity_id == playerID) {
@@ -74,6 +65,5 @@ namespace hlt {
 
 			return sortedEntities;
 		}
-
 	};
 }
