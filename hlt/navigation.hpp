@@ -5,7 +5,6 @@
 #include "move.hpp"
 #include "util.hpp"
 
-
 namespace hlt {
     namespace navigation {
         static void check_and_add_entity_between(

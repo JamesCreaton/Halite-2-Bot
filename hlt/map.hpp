@@ -48,7 +48,7 @@ namespace hlt {
 			return planetsSorted;
 		}
 
-		const std::vector<Ship> NearbyEnemyShips(hlt::Entity entity, double distanceToSearch, hlt::PlayerId playerID) const
+		const std::vector<Ship> NearbyEnemyShips(Entity entity, double distanceToSearch, hlt::PlayerId playerID) const
 		{
 			std::vector<Ship> sortedEntities = std::vector<Ship>();
 			int count = 0;
@@ -65,5 +65,6 @@ namespace hlt {
 
 			return sortedEntities;
 		}
+
 	};
 }

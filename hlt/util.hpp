@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#define M_PI 3.1415926535
-
 namespace hlt {
     namespace util {
         static int angle_rad_to_deg_clipped(const double angle_rad) {
